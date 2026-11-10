@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { COMPANIES } from "@/lib/companies";
 import { computeRanking } from "@/lib/rank";
-import { getVotes, saveVote, usingRedis } from "@/lib/store";
+import { getVotes, isPersistent, saveVote } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function GET(req: Request) {
   const votes = await getVotes();
@@ -11,7 +12,7 @@ export async function GET(req: Request) {
   return NextResponse.json({
     ...computeRanking(votes),
     mine: voterId ? votes[voterId] ?? null : null,
-    persistent: usingRedis,
+    persistent: isPersistent(),
   });
 }
 
